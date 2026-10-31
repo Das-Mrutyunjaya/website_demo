@@ -273,6 +273,9 @@
         <span id="journal-list-count" class="text-[10px] text-neutral-500">0 items</span>
       </div>
       <div id="journal-list" class="space-y-2"></div>
+      <button id="journal-reset-all-button" onclick="confirmResetJournalData()" class="tap-scale mt-4 w-full rounded-2xl border border-red-500/30 bg-red-500/15 px-3 py-2.5 text-[11px] font-semibold text-red-400">
+        Reset All Journal Data
+      </button>
     </section>
   </div>
 
@@ -291,6 +294,15 @@
           <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
         </button>
       </div>
+
+      <button onclick="confirmResetJournalData()" class="tap-scale flex flex-col items-center text-red-300">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18"></path>
+          <path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"></path>
+          <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"></path>
+        </svg>
+        <span class="mt-0.5 text-[10px] font-medium">Reset</span>
+      </button>
 
       <button onclick="document.getElementById('journal-entry').focus()" class="tap-scale flex flex-col items-center text-neutral-400">
         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3h5v5M8 16L21 3M5 5a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-6"/></svg>
@@ -463,6 +475,30 @@
       renderJournalList();
       renderJournalSummary();
       showToast('Entry deleted', '🗑️');
+    }
+
+    function confirmResetJournalData() {
+      const resetButton = document.getElementById('journal-reset-all-button');
+      if (!resetButton) return;
+
+      if (resetButton.dataset.confirming === 'true') {
+        Object.keys(journalEntries).forEach(dateKey => delete journalEntries[dateKey]);
+        saveJournalStorage();
+        renderJournalList();
+        renderJournalSummary();
+        resetButton.dataset.confirming = 'false';
+        resetButton.innerText = 'Reset All Journal Data';
+        resetButton.classList.remove('bg-red-600', 'text-white');
+        resetButton.classList.add('bg-red-500/15', 'text-red-400');
+        showToast('All journal entries cleared', '🧹');
+        return;
+      }
+
+      resetButton.dataset.confirming = 'true';
+      resetButton.innerText = 'Confirm Reset All Journal Data';
+      resetButton.classList.remove('bg-red-500/15', 'text-red-400');
+      resetButton.classList.add('bg-red-600', 'text-white');
+      showToast('Tap again to confirm permanent reset', '⚠️');
     }
 
     function applyDateFilter() {
