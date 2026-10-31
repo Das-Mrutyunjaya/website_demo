@@ -1,6 +1,6 @@
 {
-  "name": "Aura Wallet",
-  "short_name": "Aura",
+  "name": "MJ Wallet",
+  "short_name": "MJ",
   "description": "Expense tracker that saves your data on this device.",
   "start_url": ".",
   "display": "standalone",
