@@ -1,0 +1,12 @@
+{
+  "name": "Aura Wallet",
+  "short_name": "Aura",
+  "description": "Expense tracker that saves your data on this device.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#07080c",
+  "theme_color": "#090a0f",
+  "orientation": "portrait",
+  "scope": ".",
+  "icons": []
+}

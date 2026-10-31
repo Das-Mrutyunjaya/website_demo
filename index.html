@@ -9,7 +9,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Aura">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#090a0f">
+  <link rel="manifest" href="./manifest.json">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -52,7 +54,10 @@
     }
     
     body {
-      background-color: #07080c;
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 22%),
+        radial-gradient(circle at top right, rgba(168, 85, 247, 0.18), transparent 26%),
+        linear-gradient(180deg, #07080c 0%, #0a0d14 100%);
       color: #f3f4f6;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -60,6 +65,16 @@
       user-select: none;
       overflow-x: hidden;
       touch-action: pan-y;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(circle at center, black 40%, transparent 95%);
+      pointer-events: none;
     }
 
     /* Blur & Glassmorphism */
@@ -76,15 +91,23 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
     .glass-card {
-      background: linear-gradient(135deg, rgba(28, 31, 46, 0.75) 0%, rgba(18, 20, 30, 0.65) 100%);
+      background: linear-gradient(135deg, rgba(28, 31, 46, 0.82) 0%, rgba(18, 20, 30, 0.72) 100%);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 18px 45px rgba(10, 14, 23, 0.45);
     }
     .glass-card-subtle {
       background: rgba(255, 255, 255, 0.04);
       backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .metric-pill {
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     /* Dynamic Island spacer simulation for preview */
@@ -163,49 +186,49 @@
   <main class="flex-1 overflow-y-auto px-4 pb-28 pt-3 space-y-4 max-w-lg mx-auto w-full">
     
     <!-- Timeframe Filter Pill (Copilot / Apple Style) -->
-    <div class="flex p-1 rounded-2xl bg-neutral-900/90 border border-white/5 backdrop-blur-xl">
-      <button onclick="setTimeframe('today')" id="tab-today" class="flex-1 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 text-neutral-400">Today</button>
-      <button onclick="setTimeframe('week')" id="tab-week" class="flex-1 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 bg-white/10 text-white shadow-sm">This Week</button>
-      <button onclick="setTimeframe('month')" id="tab-month" class="flex-1 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 text-neutral-400">This Month</button>
+    <div class="flex p-1 rounded-2xl bg-neutral-900/90 border border-white/5 backdrop-blur-xl shadow-xl shadow-blue-500/5">
+      <button onclick="setTimeframe('today')" id="tab-today" class="flex-1 py-1.5 text-[10px] font-semibold rounded-xl transition-all duration-200 text-neutral-400">Today</button>
+      <button onclick="setTimeframe('week')" id="tab-week" class="flex-1 py-1.5 text-[10px] font-semibold rounded-xl transition-all duration-200 bg-white/10 text-white shadow-sm">Week</button>
+      <button onclick="setTimeframe('month')" id="tab-month" class="flex-1 py-1.5 text-[10px] font-semibold rounded-xl transition-all duration-200 text-neutral-400">Month</button>
+      <button onclick="setTimeframe('year')" id="tab-year" class="flex-1 py-1.5 text-[10px] font-semibold rounded-xl transition-all duration-200 text-neutral-400">Year</button>
     </div>
 
     <!-- Hero Glass Balance Card -->
-    <div class="glass-card rounded-3xl p-5 relative overflow-hidden shadow-glow-card">
-      <div class="absolute -right-12 -top-12 w-44 h-44 bg-blue-500/15 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -left-12 -bottom-12 w-40 h-40 bg-purple-500/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="glass-card rounded-[30px] p-5 relative overflow-hidden shadow-glow-card">
+      <div class="absolute -right-12 -top-12 w-44 h-44 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-12 -bottom-12 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute inset-x-0 top-0 h-20 bg-gradient-to-r from-blue-500/10 via-indigo-500/8 to-purple-500/10"></div>
 
-      <div class="flex justify-between items-start mb-2">
+      <div class="flex justify-between items-start mb-2 relative z-10">
         <span class="text-xs font-semibold tracking-wider uppercase text-neutral-400">Total Spent</span>
         <span id="hero-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
           Budget on Track
         </span>
       </div>
 
-      <div class="flex items-baseline space-x-1.5 mb-4">
+      <div class="flex items-baseline space-x-1.5 mb-4 relative z-10">
         <span class="text-2xl font-light text-neutral-400" id="hero-currency-symbol">₹</span>
-        <h2 class="text-4xl font-extrabold tracking-tight text-white" id="hero-total-spent">0.00</h2>
+        <h2 class="text-4xl font-extrabold tracking-tight text-white drop-shadow-[0_0_25px_rgba(96,165,250,0.35)]" id="hero-total-spent">0.00</h2>
       </div>
 
-      <!-- Quick Stats Row -->
-      <div class="grid grid-cols-2 gap-3 pt-3 border-t border-white/10">
-        <div>
-          <p class="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">Daily Avg</p>
-          <p class="text-base font-bold text-neutral-200" id="hero-daily-avg">₹0</p>
+      <div class="grid grid-cols-2 gap-3 pt-3 border-t border-white/10 relative z-10">
+        <div class="metric-pill rounded-2xl p-2.5">
+          <p class="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">Average</p>
+          <p class="text-base font-bold text-neutral-200 mt-1" id="hero-daily-avg">₹0</p>
         </div>
-        <div>
-          <p class="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">Remaining Budget</p>
-          <p class="text-base font-bold text-neutral-200" id="hero-remaining-budget">₹45,000</p>
+        <div class="metric-pill rounded-2xl p-2.5">
+          <p class="text-[11px] text-neutral-400 uppercase tracking-wider font-medium">Remaining</p>
+          <p class="text-base font-bold text-neutral-200 mt-1" id="hero-remaining-budget">₹45,000</p>
         </div>
       </div>
 
-      <!-- Progress bar -->
-      <div class="mt-3.5 space-y-1.5">
+      <div class="mt-3.5 space-y-1.5 relative z-10">
         <div class="flex justify-between text-[11px] text-neutral-400">
           <span>Spent vs Budget</span>
           <span id="budget-percentage" class="font-medium text-neutral-300">0%</span>
         </div>
-        <div class="h-2 w-full bg-neutral-800/80 rounded-full overflow-hidden p-[1px]">
-          <div id="budget-progress-bar" class="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full transition-all duration-500" style="width: 25%"></div>
+        <div class="h-2.5 w-full bg-neutral-800/80 rounded-full overflow-hidden p-[1px]">
+          <div id="budget-progress-bar" class="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full transition-all duration-500 shadow-[0_0_20px_rgba(96,165,250,0.7)]" style="width: 25%"></div>
         </div>
       </div>
     </div>
@@ -408,6 +431,31 @@
         </select>
       </div>
 
+      <!-- Device Storage Toggle -->
+      <div class="flex items-center justify-between rounded-xl bg-neutral-900/80 border border-white/10 px-3 py-2.5">
+        <div>
+          <p class="text-xs font-semibold text-white">Save on this device</p>
+          <p id="storage-location-label" class="text-[10px] text-neutral-400">Browser local storage</p>
+        </div>
+        <button id="device-storage-toggle" type="button" class="relative inline-flex h-6 w-11 items-center rounded-full bg-neutral-600 transition-colors focus:outline-none">
+          <span class="sr-only">Toggle device storage</span>
+          <span class="inline-block h-5 w-5 rounded-full bg-white shadow transition-transform" style="transform: translateX(2px)"></span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="chooseDataFolder()" class="tap-scale w-full py-2.5 rounded-xl bg-white/10 border border-white/10 text-xs font-semibold text-white">
+          Choose Folder
+        </button>
+        <button onclick="saveDataToFolderNow()" class="tap-scale w-full py-2.5 rounded-xl bg-blue-500/15 border border-blue-500/30 text-xs font-semibold text-blue-300">
+          Save to Folder
+        </button>
+      </div>
+
+      <button id="install-app-button" onclick="installPwa()" class="tap-scale w-full py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-xs font-semibold text-emerald-300 hidden">
+        Install App on Home Screen
+      </button>
+
       <!-- Export & Reset Buttons -->
       <div class="pt-2 space-y-2">
         <button onclick="exportCSV()" class="tap-scale w-full py-2.5 rounded-xl bg-white/10 border border-white/10 text-xs font-semibold text-white flex items-center justify-center gap-2">
@@ -437,6 +485,8 @@
     const STORAGE_KEY_TRANSACTIONS = 'aura_expenses_v1';
     const STORAGE_KEY_BUDGET = 'aura_budget_v1';
     const STORAGE_KEY_CURRENCY = 'aura_currency_v1';
+    const STORAGE_KEY_DEVICE_STORAGE = 'aura_device_storage_v1';
+    const STORAGE_KEY_FOLDER_NAME = 'aura_storage_folder_name_v1';
 
     const CATEGORIES = [
       { name: 'Food & Dining', icon: '🍕', color: '#FF9F0A' },
@@ -460,6 +510,9 @@
     let expenses = [];
     let monthlyBudget = 50000;
     let currentCurrency = 'INR';
+    let deviceStorageEnabled = true;
+    let selectedDataFolderHandle = null;
+    let selectedFolderName = 'Browser local storage';
     let selectedTimeframe = 'week'; // 'today' | 'week' | 'month'
     let selectedCategory = CATEGORIES[0].name;
     let chartInstance = null;
@@ -485,19 +538,37 @@
     // --- Init ---
     window.addEventListener('DOMContentLoaded', () => {
       loadStorage();
+      setupDeviceStorageToggle();
       buildCategoryChips();
       setDefaultDate();
       renderUI();
       setupCurrencySelector();
+      registerServiceWorker();
+      setupInstallPrompt();
+      loadDataFromFolder();
     });
 
     function loadStorage() {
       const storedExpenses = localStorage.getItem(STORAGE_KEY_TRANSACTIONS);
       const storedBudget = localStorage.getItem(STORAGE_KEY_BUDGET);
       const storedCurrency = localStorage.getItem(STORAGE_KEY_CURRENCY);
+      const storedDeviceStorage = localStorage.getItem(STORAGE_KEY_DEVICE_STORAGE);
+      const storedFolderName = localStorage.getItem(STORAGE_KEY_FOLDER_NAME);
+
+      if (storedDeviceStorage !== null) {
+        deviceStorageEnabled = storedDeviceStorage === 'true';
+      }
+
+      if (storedFolderName) {
+        selectedFolderName = storedFolderName;
+      }
 
       if (storedExpenses) {
-        expenses = JSON.parse(storedExpenses);
+        try {
+          expenses = JSON.parse(storedExpenses);
+        } catch (error) {
+          expenses = SAMPLE_DATA;
+        }
       } else {
         expenses = SAMPLE_DATA;
         saveToLocalStorage();
@@ -511,13 +582,124 @@
       if (storedCurrency && CURRENCY_SYMBOLS[storedCurrency]) {
         currentCurrency = storedCurrency;
       }
+
       updateCurrencyVisuals();
+      updateDeviceStorageToggle();
+      updateStorageLocationLabel();
     }
 
     function saveToLocalStorage() {
-      localStorage.setItem(STORAGE_KEY_TRANSACTIONS, JSON.stringify(expenses));
-      localStorage.setItem(STORAGE_KEY_BUDGET, monthlyBudget.toString());
-      localStorage.setItem(STORAGE_KEY_CURRENCY, currentCurrency);
+      if (!deviceStorageEnabled) {
+        localStorage.setItem(STORAGE_KEY_DEVICE_STORAGE, 'false');
+        return;
+      }
+
+      try {
+        localStorage.setItem(STORAGE_KEY_TRANSACTIONS, JSON.stringify(expenses));
+        localStorage.setItem(STORAGE_KEY_BUDGET, monthlyBudget.toString());
+        localStorage.setItem(STORAGE_KEY_CURRENCY, currentCurrency);
+        localStorage.setItem(STORAGE_KEY_DEVICE_STORAGE, 'true');
+        localStorage.setItem(STORAGE_KEY_FOLDER_NAME, selectedFolderName);
+      } catch (error) {
+        showToast('Device storage is full. Please clear older data.', '⚠️');
+      }
+
+      saveDataToFolderNow().catch(() => {});
+    }
+
+    function updateStorageLocationLabel() {
+      const el = document.getElementById('storage-location-label');
+      if (!el) return;
+      el.innerText = selectedFolderName || 'Browser local storage';
+    }
+
+    async function chooseDataFolder() {
+      if (!('showDirectoryPicker' in window)) {
+        showToast('Folder selection is not supported in this browser. Use browser storage instead.', '⚠️');
+        return;
+      }
+
+      try {
+        selectedDataFolderHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+        selectedFolderName = selectedDataFolderHandle.name;
+        localStorage.setItem(STORAGE_KEY_FOLDER_NAME, selectedFolderName);
+        updateStorageLocationLabel();
+        await saveDataToFolderNow();
+        showToast(`Folder selected: ${selectedFolderName}`, '📁');
+      } catch (error) {
+        showToast('Folder selection cancelled', 'ℹ️');
+      }
+    }
+
+    async function saveDataToFolderNow() {
+      if (!selectedDataFolderHandle) return;
+
+      try {
+        const fileHandle = await selectedDataFolderHandle.getFileHandle('aura-wallet-data.json', { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(JSON.stringify({
+          expenses,
+          monthlyBudget,
+          currentCurrency,
+          savedAt: new Date().toISOString()
+        }, null, 2));
+        await writable.close();
+      } catch (error) {
+        showToast('Could not save to selected folder', '⚠️');
+      }
+    }
+
+    async function loadDataFromFolder() {
+      if (!selectedDataFolderHandle) return;
+
+      try {
+        const fileHandle = await selectedDataFolderHandle.getFileHandle('aura-wallet-data.json');
+        const file = await fileHandle.getFile();
+        const data = JSON.parse(await file.text());
+        if (Array.isArray(data.expenses)) {
+          expenses = data.expenses;
+        }
+        if (data.monthlyBudget) {
+          monthlyBudget = Number(data.monthlyBudget);
+        }
+        if (data.currentCurrency && CURRENCY_SYMBOLS[data.currentCurrency]) {
+          currentCurrency = data.currentCurrency;
+        }
+        document.getElementById('setting-budget-input').value = monthlyBudget;
+        updateCurrencyVisuals();
+        renderUI();
+      } catch (error) {
+        // No saved file yet; ignore and keep current in-memory data.
+      }
+    }
+
+    function setupDeviceStorageToggle() {
+      const toggleBtn = document.getElementById('device-storage-toggle');
+      if (!toggleBtn) return;
+
+      toggleBtn.addEventListener('click', () => {
+        deviceStorageEnabled = !deviceStorageEnabled;
+        localStorage.setItem(STORAGE_KEY_DEVICE_STORAGE, String(deviceStorageEnabled));
+        updateDeviceStorageToggle();
+
+        if (deviceStorageEnabled) {
+          saveToLocalStorage();
+          showToast('Saved on this device', '📱');
+        } else {
+          showToast('Storage paused on this device', '🔒');
+        }
+      });
+    }
+
+    function updateDeviceStorageToggle() {
+      const toggleBtn = document.getElementById('device-storage-toggle');
+      if (!toggleBtn) return;
+
+      toggleBtn.classList.toggle('bg-emerald-500', deviceStorageEnabled);
+      toggleBtn.classList.toggle('bg-neutral-600', !deviceStorageEnabled);
+      toggleBtn.querySelector('span').style.transform = deviceStorageEnabled ? 'translateX(22px)' : 'translateX(2px)';
+      toggleBtn.querySelector('span').classList.toggle('bg-emerald-300', deviceStorageEnabled);
+      toggleBtn.querySelector('span').classList.toggle('bg-white', !deviceStorageEnabled);
     }
 
     function setDefaultDate() {
@@ -538,7 +720,6 @@
       const todayStr = now.toISOString().split('T')[0];
 
       return expenses.filter(item => {
-        // Date timeframe filter
         const itemDate = new Date(item.date);
         let matchesTimeframe = true;
 
@@ -546,13 +727,14 @@
           matchesTimeframe = item.date === todayStr;
         } else if (selectedTimeframe === 'week') {
           const sevenDaysAgo = new Date();
-          sevenDaysAgo.setDate(now.getDate() - 7);
+          sevenDaysAgo.setDate(now.getDate() - 6);
           matchesTimeframe = itemDate >= sevenDaysAgo && itemDate <= now;
         } else if (selectedTimeframe === 'month') {
           matchesTimeframe = itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear();
+        } else if (selectedTimeframe === 'year') {
+          matchesTimeframe = itemDate.getFullYear() === now.getFullYear();
         }
 
-        // Search text filter
         let matchesSearch = true;
         if (searchQuery.trim().length > 0) {
           const q = searchQuery.toLowerCase();
@@ -693,64 +875,138 @@
         chartInstance.destroy();
       }
 
+      const fiveColorGradients = ['#60a5fa', '#34d399', '#a78bfa', '#fbbf24', '#fb7185'];
+
       if (activeChartType === 'bar') {
-        // Daily Bar Trend
-        const daysMap = {};
-        const labels = [];
-        for (let i = 6; i >= 0; i--) {
-          const d = new Date();
-          d.setDate(d.getDate() - i);
-          const dateStr = d.toISOString().split('T')[0];
-          const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-          daysMap[dateStr] = 0;
-          labels.push({ str: dateStr, name: dayName });
+        const chartBuckets = [];
+        const now = new Date();
+
+        if (selectedTimeframe === 'week') {
+          for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const key = d.toISOString().split('T')[0];
+            chartBuckets.push({
+              key,
+              label: d.toLocaleDateString('en-US', { weekday: 'short' }),
+              items: []
+            });
+          }
+
+          list.forEach(item => {
+            const bucket = chartBuckets.find(b => b.key === item.date);
+            if (bucket) bucket.items.push(item);
+          });
+        } else if (selectedTimeframe === 'month') {
+          const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+          const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+          const weekStarts = [];
+          let current = new Date(monthStart);
+          current.setDate(current.getDate() - current.getDay());
+
+          while (current <= monthEnd) {
+            const weekStart = new Date(current);
+            const weekEnd = new Date(current);
+            weekEnd.setDate(weekStart.getDate() + 6);
+
+            const normalizedWeekStart = new Date(weekStart);
+            const normalizedWeekEnd = new Date(weekEnd);
+            if (normalizedWeekStart < monthStart) normalizedWeekStart.setTime(monthStart.getTime());
+            if (normalizedWeekEnd > monthEnd) normalizedWeekEnd.setTime(monthEnd.getTime());
+
+            weekStarts.push({
+              key: `${normalizedWeekStart.toISOString().split('T')[0]}-${normalizedWeekEnd.toISOString().split('T')[0]}`,
+              label: `${normalizedWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${normalizedWeekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+              start: new Date(normalizedWeekStart),
+              end: new Date(normalizedWeekEnd),
+              items: []
+            });
+
+            current.setDate(current.getDate() + 7);
+          }
+
+          chartBuckets.push(...weekStarts);
+
+          list.forEach(item => {
+            const itemDate = new Date(item.date);
+            const bucket = chartBuckets.find(b => itemDate >= b.start && itemDate <= b.end);
+            if (bucket) bucket.items.push(item);
+          });
+        } else if (selectedTimeframe === 'year') {
+          for (let i = 0; i < 12; i++) {
+            const monthDate = new Date(now.getFullYear(), i, 1);
+            const monthKey = `${monthDate.getFullYear()}-${String(i + 1).padStart(2, '0')}`;
+            chartBuckets.push({
+              key: monthKey,
+              label: monthDate.toLocaleDateString('en-US', { month: 'short' }),
+              start: new Date(now.getFullYear(), i, 1),
+              end: new Date(now.getFullYear(), i + 1, 0),
+              items: []
+            });
+          }
+
+          list.forEach(item => {
+            const itemDate = new Date(item.date);
+            const bucket = chartBuckets.find(b => itemDate >= b.start && itemDate <= b.end);
+            if (bucket) bucket.items.push(item);
+          });
         }
 
-        list.forEach(item => {
-          if (daysMap[item.date] !== undefined) {
-            daysMap[item.date] += parseFloat(item.amount);
-          }
-        });
-
-        const dataPoints = labels.map(l => daysMap[l.str]);
+        const dataPoints = chartBuckets.map(bucket => bucket.items.reduce((sum, item) => sum + parseFloat(item.amount), 0));
 
         chartInstance = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: labels.map(l => l.name),
+            labels: chartBuckets.map(bucket => bucket.label),
             datasets: [{
               data: dataPoints,
-              backgroundColor: 'rgba(10, 132, 255, 0.75)',
-              borderRadius: 8,
+              backgroundColor: (context) => {
+                const index = context.dataIndex;
+                return fiveColorGradients[index % fiveColorGradients.length];
+              },
+              borderColor: 'rgba(255,255,255,0.12)',
+              borderWidth: 1,
+              borderRadius: { topLeft: 10, topRight: 10, bottomLeft: 0, bottomRight: 0 },
+              hoverBackgroundColor: '#8ab4ff',
               borderSkipped: false,
-              hoverBackgroundColor: '#0A84FF'
+              barThickness: 'flex'
             }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: { duration: 800, easing: 'easeOutCubic' },
             plugins: {
               legend: { display: false },
               tooltip: {
-                backgroundColor: 'rgba(20, 22, 34, 0.95)',
+                backgroundColor: 'rgba(20, 22, 34, 0.98)',
                 titleFont: { size: 11 },
                 bodyFont: { size: 12, weight: 'bold' },
-                cornerRadius: 8,
+                cornerRadius: 10,
                 displayColors: false,
+                padding: 12,
                 callbacks: {
-                  label: (ctx) => `${CURRENCY_SYMBOLS[currentCurrency]}${ctx.parsed.y.toLocaleString()}`
+                  title: (items) => `${items[0].label}`,
+                  label: (ctx) => `${CURRENCY_SYMBOLS[currentCurrency]}${ctx.parsed.y.toLocaleString()} total`,
+                  afterLabel: (ctx) => {
+                    const bucket = chartBuckets[ctx.dataIndex];
+                    if (!bucket || bucket.items.length === 0) return '';
+                    const topItems = bucket.items.slice(0, 3).map(item => `${item.category}: ${CURRENCY_SYMBOLS[currentCurrency]}${parseFloat(item.amount).toLocaleString('en-IN')}`);
+                    return topItems.join('\n');
+                  }
                 }
               }
             },
             scales: {
               x: {
                 grid: { display: false },
-                ticks: { color: '#71717a', font: { size: 10 } }
+                ticks: { color: '#a1a1aa', font: { size: 10 } }
               },
               y: {
-                grid: { color: 'rgba(255,255,255,0.05)' },
+                grid: { color: 'rgba(255,255,255,0.08)' },
                 ticks: {
-                  color: '#71717a',
+                  color: '#a1a1aa',
                   font: { size: 9 },
                   callback: val => val >= 1000 ? `${val/1000}k` : val
                 }
@@ -759,7 +1015,6 @@
           }
         });
       } else {
-        // Category Breakdown Doughnut
         const catMap = {};
         list.forEach(item => {
           catMap[item.category] = (catMap[item.category] || 0) + parseFloat(item.amount);
@@ -767,9 +1022,9 @@
 
         const catNames = Object.keys(catMap);
         const catValues = Object.values(catMap);
-        const catColors = catNames.map(name => {
+        const catColors = catNames.map((name, index) => {
           const match = CATEGORIES.find(c => c.name === name);
-          return match ? match.color : '#64D2FF';
+          return match ? match.color : fiveColorGradients[index % fiveColorGradients.length];
         });
 
         chartInstance = new Chart(ctx, {
@@ -780,7 +1035,8 @@
               data: catValues,
               backgroundColor: catColors,
               borderWidth: 2,
-              borderColor: '#07080c'
+              borderColor: '#0b0f18',
+              hoverOffset: 8
             }]
           },
           options: {
@@ -790,9 +1046,11 @@
             plugins: {
               legend: {
                 position: 'right',
-                labels: { color: '#a1a1aa', font: { size: 10 }, boxWidth: 10, padding: 8 }
+                labels: { color: '#d4d4d8', font: { size: 10 }, boxWidth: 10, padding: 8 }
               },
               tooltip: {
+                backgroundColor: 'rgba(20, 22, 34, 0.98)',
+                cornerRadius: 10,
                 callbacks: {
                   label: (c) => ` ${c.label}: ${CURRENCY_SYMBOLS[currentCurrency]}${c.parsed.toLocaleString()}`
                 }
@@ -915,12 +1173,12 @@
     // --- Timeframe Filter Handling ---
     function setTimeframe(tf) {
       selectedTimeframe = tf;
-      ['today', 'week', 'month'].forEach(tab => {
+      ['today', 'week', 'month', 'year'].forEach(tab => {
         const el = document.getElementById(`tab-${tab}`);
         if (tab === tf) {
-          el.className = "flex-1 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 bg-white/10 text-white shadow-sm";
+          el.className = "flex-1 py-1.5 text-[10px] font-semibold rounded-xl transition-all duration-200 bg-gradient-to-r from-blue-500/25 to-purple-500/25 text-white shadow-lg shadow-blue-500/20 border border-white/10";
         } else {
-          el.className = "flex-1 py-1.5 text-xs font-semibold rounded-xl transition-all duration-200 text-neutral-400";
+          el.className = "flex-1 py-1.5 text-[10px] font-semibold rounded-xl transition-all duration-200 text-neutral-400";
         }
       });
       renderUI();
@@ -1013,6 +1271,41 @@
       link.click();
       document.body.removeChild(link);
       showToast('CSV Exported', '📥');
+    }
+
+    function registerServiceWorker() {
+      if (!('serviceWorker' in navigator)) return;
+      navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+    }
+
+    let deferredInstallPrompt = null;
+
+    function setupInstallPrompt() {
+      const installButton = document.getElementById('install-app-button');
+      if (!installButton) return;
+
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        installButton.classList.remove('hidden');
+      });
+
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        installButton.classList.add('hidden');
+      }
+    }
+
+    async function installPwa() {
+      const installButton = document.getElementById('install-app-button');
+      if (!deferredInstallPrompt) {
+        showToast('Open in a supported browser to install this app', '📲');
+        return;
+      }
+
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      installButton.classList.add('hidden');
     }
 
     // --- Toast / Feedback ---
